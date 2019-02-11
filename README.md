@@ -1,10 +1,8 @@
-__This rep is not supported anymore. If you overcome the capcha security please inform me__ 
-
 # Section Check for Bilkent University
 This project is non-profit application in order to help Bilkent University students during course registration.
 
 
-**Python version: 3.4** . 
+**Python version: 3.4** .
 
 **Fell free to contribute or fork.**
 
