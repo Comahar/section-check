@@ -1,16 +1,19 @@
-__author__ = 'orcungumus'
+__original_author__ = 'orcungumus'
 
 import pyglet
 import datetime
 import urllib.request
 import threading
 import time
+import datetime
 
 
 class CourseCrawler(threading.Thread):
-    def __init__(self, thread_id, dept, sections, sleep_time=5):
+    def __init__(self, thread_id, dept, sections, semester, sleep_time=5):
         threading.Thread.__init__(self)
-        self.url = 'https://stars.bilkent.edu.tr/homepage/ajax/plainOfferings.php?COURSE_CODE=' + dept + '&SEMESTER=20151'
+        self.year = datetime.datetime.now().date().year
+        self.semester = ""
+        self.url = 'https://stars.bilkent.edu.tr/homepage/ajax/plainOfferings.php?COURSE_CODE=' + dept + '&SEMESTER=' + str(year) + semester
         self.thread_id = thread_id
         self.dept = dept
         self.sections = []
@@ -61,7 +64,8 @@ class CourseCrawler(threading.Thread):
 def main():
     count = 0
     treads = []
-
+    semester = input("Semester(1 = Fall 2 = Spring 3 = Summer): ")
+    
     while True:
         menu_input = input("What do you want. \n1 for add new course\n2 for check existing situation\n3 for exit\nEnter Number:")
 
@@ -72,7 +76,7 @@ def main():
                 "Please enter course name with sections comma-separeted\nExample Inputs:\n*111-21,111-20\n*111-9\n*111\nEnter sections: ")
             for course_code in course_codes.split(","):
                 sections.append(course_code)
-            finder = CourseCrawler(count, dept, sections)
+            finder = CourseCrawler(count, dept, sections, semester)
             treads.append(finder)
             finder.start()
             count += 1
