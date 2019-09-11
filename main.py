@@ -13,7 +13,7 @@ class CourseCrawler(threading.Thread):
         threading.Thread.__init__(self)
         self.year = datetime.datetime.now().date().year
         self.semester = ""
-        self.url = 'https://stars.bilkent.edu.tr/homepage/ajax/plainOfferings.php?COURSE_CODE=' + dept + '&SEMESTER=' + str(year) + semester
+        self.url = 'https://stars.bilkent.edu.tr/homepage/ajax/plainOfferings.php?COURSE_CODE=' + dept + '&SEMESTER=' + str(self.year) + semester
         self.thread_id = thread_id
         self.dept = dept
         self.sections = []
