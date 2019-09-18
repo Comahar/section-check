@@ -1,6 +1,6 @@
 # Section Check for Bilkent University
 
-### Installiation
+### Installation
 1)You should have pyglet package to hear the sound.
 
 ```
@@ -25,9 +25,10 @@ Setup config.txt file.
 
 Start main.py and just wait for a siren.
 
+### Developing
+You can use your own script to use the sectioncheck pakage.
 
-
-
+Feel free to contribute and fork.
 
 ### Warning
 Do not decrease sleep time.
