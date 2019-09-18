@@ -1,11 +1,8 @@
-__original_author__ = 'orcungumus'
-
 import pyglet
 import datetime
 import urllib.request
 import threading
 import time
-import datetime
 
 
 class CourseCrawler(threading.Thread):
@@ -13,7 +10,7 @@ class CourseCrawler(threading.Thread):
         threading.Thread.__init__(self)
         self.year = datetime.datetime.now().date().year
         self.semester = ""
-        self.url = 'https://stars.bilkent.edu.tr/homepage/ajax/plainOfferings.php?COURSE_CODE=' + dept + '&SEMESTER=' + str(self.year) + semester
+        self.url = "https://stars.bilkent.edu.tr/homepage/ajax/plainOfferings.php?COURSE_CODE=" + str(dept) + "&SEMESTER=" + str(self.year) + str(semester)
         self.thread_id = thread_id
         self.dept = dept
         self.sections = []
@@ -38,7 +35,7 @@ class CourseCrawler(threading.Thread):
 
                     if area is True:
                         if self.is_avalible(line):
-                            self.founded()
+                            self.found()
 
                     if 'images/icon_desc.gif' in line:
                         area = False
@@ -54,44 +51,41 @@ class CourseCrawler(threading.Thread):
     def is_avalible(line):
         return ("Must or Elect" in line) and (int(line.split("<td align='center'>")[7].split("</td>")[0]) != 0)
 
-    def founded(self):
-        print("Founded: {0}, {1}. Input 3 for exit".format(self.dept, self.current_area))
+    def found(self):
+        print("Found: {0}, {1}.".format(self.dept, self.current_area))
         song = pyglet.media.load('siren.wav')
         song.play()
         pyglet.app.run()
 
 
-def main():
-    count = 0
-    treads = []
-    semester = input("Semester(1 = Fall 2 = Spring 3 = Summer): ")
-    
-    while True:
-        menu_input = input("What do you want. \n1 for add new course\n2 for check existing situation\n3 for exit\nEnter Number:")
-
-        if int(menu_input) == 1:
-            sections = []
-            dept = input("Please enter dept name, for example HUM: ")
-            course_codes = input(
-                "Please enter course name with sections comma-separeted\nExample Inputs:\n*111-21,111-20\n*111-9\n*111\nEnter sections: ")
-            for course_code in course_codes.split(","):
-                sections.append(course_code)
-            finder = CourseCrawler(count, dept, sections, semester)
-            treads.append(finder)
-            finder.start()
-            count += 1
-
-        elif int(menu_input) == 2:
-            for thread in treads:
-                print(str(thread))
-
-        else:
-            pyglet.app.exit()
-            for thread in treads:
-                thread.stop_t()
-                thread.join()
-
-            break
-
-
-main()
+class courseCrawlerHandler():
+    def __init__(self, depts, courseCodes, sections, semester):
+        try:
+            f = open("siren.wav")
+            f.close()
+        except Exception:
+            print("siren.wav not found. This will error")
+        self.depts = depts
+        self.courseCodes = courseCodes
+        self.sections = sections
+        self.semester = semester
+        self.threads = []
+        print("Searching for:")
+        for i in range(len(depts)):
+            formattedSections = []
+            if(sections[i] == []):
+                formattedSections.append(courseCodes[i])
+            else:
+                for section in sections[i]:
+                    formattedSections.append(courseCodes[i] + "-" + section)
+            crawler = CourseCrawler(i, depts[i], formattedSections, semester)
+            self.threads.append(crawler)
+            crawler.start()
+    def exit(self):
+        for thread in self.threads:
+            thread.stop_t()
+            thread.join()
+        pyglet.app.exit()
+    def print(self):
+        for thread in self.threads:
+            print(str(thread))
