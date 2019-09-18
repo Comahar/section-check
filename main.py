@@ -35,8 +35,8 @@ def main():
 			print("Format Error in line", i, " ", line)
 			return
 
-	import main
-	handler = main.courseCrawlerHandler(depts, courseCodes, sections, semester)
+	import sectioncheck
+	handler = sectioncheck.courseCrawlerHandler(depts, courseCodes, sections, semester)
 
 	while True:
 		try:
