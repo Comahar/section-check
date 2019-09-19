@@ -25,9 +25,9 @@ class CourseCrawler(threading.Thread):
         while not self.stop:
             with urllib.request.urlopen(self.url) as f:
                 area = False
-                for line in f:
-                    line = line.decode('utf-8')
-
+                page = f.read().decode('utf-8')
+                page = page.split("<tr>")
+                for line in page:
                     for section in self.sections:
                         if section in line:
                             self.current_area = section
