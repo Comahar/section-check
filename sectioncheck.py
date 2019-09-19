@@ -49,7 +49,7 @@ class CourseCrawler(threading.Thread):
 
     @staticmethod
     def is_avalible(line):
-        return ("Must or Elect" in line) and (int(line.split("<td align='center'>")[7].split("</td>")[0]) != 0)
+        return int(line.split("<td align='center'>")[7].split("</td>")[0]) > 0
 
     def found(self):
         print("Found: {0}, {1}.".format(self.dept, self.current_area))
