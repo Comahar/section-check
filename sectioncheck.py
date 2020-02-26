@@ -6,11 +6,9 @@ import time
 
 
 class CourseCrawler(threading.Thread):
-    def __init__(self, thread_id, dept, sections, semester, sleep_time=5):
+    def __init__(self, thread_id, dept, sections, semester, year, discordEnabled=False, pingmsg="", webhookurl="", sleep_time=5):
         threading.Thread.__init__(self)
-        self.year = datetime.datetime.now().date().year
-        self.semester = ""
-        self.url = "https://stars.bilkent.edu.tr/homepage/ajax/plainOfferings.php?COURSE_CODE=" + str(dept) + "&SEMESTER=" + str(self.year) + str(semester)
+        self.url = "https://stars.bilkent.edu.tr/homepage/ajax/plainOfferings.php?COURSE_CODE=" + str(dept) + "&SEMESTER=" + str(year) + str(semester)
         self.thread_id = thread_id
         self.dept = dept
         self.sections = []
@@ -18,16 +16,23 @@ class CourseCrawler(threading.Thread):
         self.current_area = ""
         self.sleep_time = sleep_time
         self.start_time = datetime.datetime.now()
+        self.discordEnabled = discordEnabled
+        self.pingmsg = pingmsg
+        self.webhookurl = webhookurl
         for section in sections:
             self.sections.append(dept + ' ' + section)
+        if(self.discordEnabled):
+            from discord_webhook import DiscordWebhook
+
 
     def run(self):
+        print(self.url)
         while not self.stop:
             with urllib.request.urlopen(self.url) as f:
                 area = False
-                page = f.read().decode('utf-8')
-                page = page.split("<tr>")
-                for line in page:
+                for line in f:
+                    line = line.decode('utf-8')
+
                     for section in self.sections:
                         if section in line:
                             self.current_area = section
@@ -49,17 +54,23 @@ class CourseCrawler(threading.Thread):
 
     @staticmethod
     def is_avalible(line):
-        return int(line.split("<td align='center'>")[7].split("</td>")[0]) > 0
+        return ("Mand." in line) and (int(line.split("<td align='center'>")[7].split("</td>")[0]) != 0)
 
     def found(self):
         print("Found: {0}, {1}.".format(self.dept, self.current_area))
+        
+        if(self.discordEnabled):
+            fmsg = " Found: "+ self.dept + ", " + self.current_area + "."
+            webhook = DiscordWebhook(url=self.webhookurl, content=self.pingmsg+fmsg)
+            response = webhook.execute()
+
         song = pyglet.media.load('siren.wav')
         song.play()
         pyglet.app.run()
 
 
 class courseCrawlerHandler():
-    def __init__(self, depts, courseCodes, sections, semester):
+    def __init__(self, depts, courseCodes, sections, semester, year):
         try:
             f = open("siren.wav")
             f.close()
@@ -69,6 +80,7 @@ class courseCrawlerHandler():
         self.courseCodes = courseCodes
         self.sections = sections
         self.semester = semester
+        self.year = year
         self.threads = []
         print("Searching for:")
         for i in range(len(depts)):
@@ -78,7 +90,7 @@ class courseCrawlerHandler():
             else:
                 for section in sections[i]:
                     formattedSections.append(courseCodes[i] + "-" + section)
-            crawler = CourseCrawler(i, depts[i], formattedSections, semester)
+            crawler = CourseCrawler(i, depts[i], formattedSections, semester, year)
             self.threads.append(crawler)
             crawler.start()
     def exit(self):
@@ -89,3 +101,4 @@ class courseCrawlerHandler():
     def print(self):
         for thread in self.threads:
             print(str(thread))
+
