@@ -1,10 +1,16 @@
 import os.path
+enableDiscordWebhook = False
+webhookurl = ""
+pingmsg = ""
+
+
 def main():
 	if(not os.path.exists('config.txt')):
 		print("config.txt file does not exists. Generating.\nClose and change values to your needs.")
 		f = open("config.txt")
 	f = open("config.txt")
 
+	year = f.readline()[:-1]
 	semesterInput = f.readline()
 	semesterSwitch = {
 		"fall" : 1,
@@ -23,20 +29,21 @@ def main():
 	lines = f.readlines()
 	for i in range(len(lines)):
 		line = lines[i]
-		try:
-			line = line.rstrip('\n')
-			depts.append(line.split("-")[0])
-			courseCodes.append(line.split("-")[1])
-			if(line.count("-")==2):
-				sections.append(line.split("-")[2].split(","))
-			else:
-				sections.append([])
-		except Exception:
-			print("Format Error in line", i, " ", line)
-			return
+		if(line[0:2] != "//"):
+			try:
+				line = line.rstrip('\n')
+				depts.append(line.split("-")[0])
+				courseCodes.append(line.split("-")[1])
+				if(line.count("-")==2):
+					sections.append(line.split("-")[2].split(","))
+				else:
+					sections.append([])
+			except Exception:
+				print("Format Error in line", i, " ", line)
+				return
 
 	import sectioncheck
-	handler = sectioncheck.courseCrawlerHandler(depts, courseCodes, sections, semester)
+	handler = sectioncheck.courseCrawlerHandler(depts, courseCodes, sections, semester, year, discordEnabled=False)
 
 	while True:
 		try:
