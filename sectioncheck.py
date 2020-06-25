@@ -63,7 +63,6 @@ class CourseCrawler(threading.Thread):
             webhook = DiscordWebhook(url=self.webhookurl, content=self.pingmsg+fmsg)
             response = webhook.execute()
 
-        import pyglet
         song = pyglet.media.load('siren.wav')
         song.play()
         pyglet.app.run()
