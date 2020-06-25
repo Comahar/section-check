@@ -20,7 +20,7 @@ def main():
 	if(semesterInput.lower()[:-1] in semesterSwitch.keys()):
 		semester = semesterSwitch[semesterInput.lower()[:-1]]
 	else:
-		print("Wrong semester input. Exiting.")
+		print("Wrong semester input in line 2, it should be fall, spring or summer. Exiting.")
 		return
 
 	depts = []
@@ -43,7 +43,7 @@ def main():
 				return
 
 	import sectioncheck
-	handler = sectioncheck.courseCrawlerHandler(depts, courseCodes, sections, semester, year, discordEnabled=False)
+	handler = sectioncheck.courseCrawlerHandler(depts, courseCodes, sections, semester, year)
 
 	while True:
 		try:
@@ -52,8 +52,6 @@ def main():
 				handler.exit()
 				return
 			elif(inText == "course"):
-				# for i in range(len(depts)):
-				# 	print(depts[i], courseCodes[i], sections[i])
 				handler.print()
 		except Exception as e:
 			print(e)

@@ -6,7 +6,7 @@ import time
 
 
 class CourseCrawler(threading.Thread):
-    def __init__(self, thread_id, dept, sections, semester, year, discordEnabled=False, pingmsg="", webhookurl="", sleep_time=5):
+    def __init__(self, thread_id, dept, sections, semester, year, webhookurl, pingmsg, sleep_time=5):
         threading.Thread.__init__(self)
         self.url = "https://stars.bilkent.edu.tr/homepage/ajax/plainOfferings.php?COURSE_CODE=" + str(dept) + "&SEMESTER=" + str(year) + str(semester)
         self.thread_id = thread_id
@@ -16,12 +16,11 @@ class CourseCrawler(threading.Thread):
         self.current_area = ""
         self.sleep_time = sleep_time
         self.start_time = datetime.datetime.now()
-        self.discordEnabled = discordEnabled
         self.pingmsg = pingmsg
         self.webhookurl = webhookurl
         for section in sections:
             self.sections.append(dept + ' ' + section)
-        if(self.discordEnabled):
+        if(self.webhookurl != ""):
             from discord_webhook import DiscordWebhook
 
 
@@ -59,7 +58,7 @@ class CourseCrawler(threading.Thread):
     def found(self):
         print("Found: {0}, {1}.".format(self.dept, self.current_area))
         
-        if(self.discordEnabled):
+        if(self.webhookurl != ""):
             fmsg = " Found: "+ self.dept + ", " + self.current_area + "."
             webhook = DiscordWebhook(url=self.webhookurl, content=self.pingmsg+fmsg)
             response = webhook.execute()
@@ -70,7 +69,7 @@ class CourseCrawler(threading.Thread):
 
 
 class courseCrawlerHandler():
-    def __init__(self, depts, courseCodes, sections, semester, year):
+    def __init__(self, depts, courseCodes, sections, semester, year, webhookurl="", webhookmsg=""):
         try:
             f = open("siren.wav")
             f.close()
@@ -90,7 +89,7 @@ class courseCrawlerHandler():
             else:
                 for section in sections[i]:
                     formattedSections.append(courseCodes[i] + "-" + section)
-            crawler = CourseCrawler(i, depts[i], formattedSections, semester, year)
+            crawler = CourseCrawler(i, depts[i], formattedSections, semester, year, webhookurl, webhookmsg)
             self.threads.append(crawler)
             crawler.start()
     def exit(self):
