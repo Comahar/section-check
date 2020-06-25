@@ -1,8 +1,4 @@
 import os.path
-enableDiscordWebhook = False
-webhookurl = ""
-pingmsg = ""
-
 
 def main():
 	if(not os.path.exists('config.txt')):
