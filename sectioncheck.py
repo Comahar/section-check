@@ -21,7 +21,9 @@ class CourseCrawler(threading.Thread):
         for section in sections:
             self.sections.append(dept + ' ' + section)
         if(self.webhookurl != ""):
-            from discord_webhook import DiscordWebhook
+            import discord_webhook
+            webhook = discord_webhook.DiscordWebhook(url=self.webhookurl, content=dept + ' ' + section + " thread started.")
+            response = webhook.execute()
 
 
     def run(self):
@@ -59,8 +61,9 @@ class CourseCrawler(threading.Thread):
         print("Found: {0}, {1}.".format(self.dept, self.current_area))
         
         if(self.webhookurl != ""):
+            import discord_webhook
             fmsg = " Found: "+ self.dept + ", " + self.current_area + "."
-            webhook = DiscordWebhook(url=self.webhookurl, content=self.pingmsg+fmsg)
+            webhook = discord_webhook.DiscordWebhook(url=self.webhookurl, content=self.pingmsg+fmsg)
             response = webhook.execute()
 
         song = pyglet.media.load('siren.wav')
