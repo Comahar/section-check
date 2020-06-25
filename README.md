@@ -16,11 +16,13 @@ python main.py
 ### Optional Discord Alerts
 1) Install discord_webhook
 
-2) Set enableDiscordWebhook to True in main
+2) Pass webhook url in main as:
+```sectioncheck.courseCrawlerHandler(depts, courseCodes, sections, semester, year, webhookurl="your_url")```
 
 3) Set webhookurl in main to your server's bot's url
 
-4) You can make your bot ping you if you set your pingmsg to your mention id.(eg. <@140408733719138560>)
+Optional: You can make your bot ping you if you set your pingmsg to your mention id.(eg. <@140408733719138560> to find this look at [this](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID))
+```sectioncheck.courseCrawlerHandler(depts, courseCodes, sections, semester, year, webhookurl="your_url", webhookmsg="<@140408733719138560>")```
 
 ### Example Config
 ```
